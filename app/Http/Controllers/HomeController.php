@@ -14,8 +14,7 @@ class HomeController extends Controller
     }
 
     public function saveTemplate(Request $request)
-    {
-        dd($request->all());
+    {   
         Template::create($request->all());
         return ['message' => 'Stored!'];
     }

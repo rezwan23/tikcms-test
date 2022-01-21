@@ -4,35 +4,66 @@ namespace App\Parser;
 
 class Parser
 {
-    public function parse($css)
+    public function parse($string, $template = '')
     {
         $i = 0;
 
-        $data = [];
+        $styleArray = [];
 
         while (isset($string[$i])) {
 
-            $key = $this->getKey($i, $css);
+            $key = $this->getKey($i, $string);
 
             ++$i;
 
-            $styles = $this->getCss($i, $css);
+            $css = $this->getCss($i, $string);
+
+            $splittedCSS = $this->splitCSS($css);
 
 
-            $splittedCSS = $this->splitCSS($styles);
+            $styleArray[trim($key)] = $splittedCSS;
 
-
-            $data[trim($key)] = $splittedCSS;
-
-            $key = $styles = '';
+            $key = $css = '';
 
             $i++;
         }
 
-        return $data;
+        $templateS = $this->parseTemplate($template, $styleArray);
+
+        return $templateS;
     }
 
-    public function splitCSS($css)
+    public function parseTemplate($template, $formattedCssArr)
+    {
+        $foramttedTemplate = $template;
+        foreach ($formattedCssArr as $el => $cssArr) {
+            if(trim($el) == '*' ||trim($el) == 'body') continue;
+            $onlyClassOrIdname = trim($el);
+            $appendText = '';
+            if (trim($el)[0] == '.') {
+                $appendText = 'class';
+                $onlyClassOrIdname = trim(str_replace('.', '', $el));
+            }
+            if (trim($el)[0] == '#') {
+                $appendText = 'id';
+                $onlyClassOrIdname = trim(str_replace('#', '', $el));
+            }
+            $style = '';
+            foreach ($cssArr as $styles) {
+                foreach($styles as $property => $value){
+                    $style.= $property.':'.$value.';';
+                }
+            }
+            if($onlyClassOrIdname != '*' && $onlyClassOrIdname != 'body'){
+                $search = $appendText.'="'.$onlyClassOrIdname.'"';
+                $foramttedTemplate = str_replace($search, $search . ' style="' . $style . '"', $foramttedTemplate);
+            }
+        }
+        return $foramttedTemplate;
+    }
+
+
+    function splitCSS($css)
     {
         $style = [];
         foreach (explode(';', trim($css)) as $singleCssStyle) {
@@ -44,7 +75,8 @@ class Parser
         return $style;
     }
 
-    public function getKey($position, $string)
+
+    function getKey(&$position, &$string)
     {
         $key = '';
         while ($string[$position] != '{') {
@@ -54,7 +86,7 @@ class Parser
         return $key;
     }
 
-    public function getCSS($position, $string)
+    function getCSS(&$position, $string)
     {
         $css = '';
         while ($string[$position] != '}') {

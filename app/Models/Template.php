@@ -13,8 +13,8 @@ class Template extends Model
     protected $fillable = ['name', 'template', 'style'];
 
 
-    public function setStyleAttribute($value)
+    public function setTemplateAttribute($value)
     {
-        $this->attributes['style'] = serialize(Parser::parse($value));
+        $this->attributes['template'] = Parser::parse(request()->style, $value);
     }
 }

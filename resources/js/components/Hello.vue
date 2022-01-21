@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1><center><button class="btn btn-primary" @click="getTemplates">Templates</button></center></h1>
+    <h1 style="text-align:center"><button class="btn btn-primary" @click="getTemplates">Templates</button></h1>
     <div>
       <div class="row">
         <div v-for="(item, index) in templates" :key="index" class="col-md-6">

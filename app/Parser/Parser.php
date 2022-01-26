@@ -42,7 +42,7 @@ class Parser
             $appendText = '';
             if (trim($el)[0] == '.') {
                 $appendText = 'class';
-                $onlyClassOrIdname = trim(str_replace('.', '', $el));
+                $onlyClassOrIdname = trim(str_replace('.', ' ', $el));
             }
             if (trim($el)[0] == '#') {
                 $appendText = 'id';

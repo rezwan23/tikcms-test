@@ -33,3 +33,7 @@ Route::get('/get-css/{template}', function(Template $template) {
     $response->header('Content-Type', 'text/css');
     return $response;
 });
+
+Route::post('save-images', [HomeController::class, 'saveImages']);
+
+Route::get('get-images', [HomeController::class, 'getImages']);
